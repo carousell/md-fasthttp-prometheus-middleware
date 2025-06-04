@@ -77,7 +77,7 @@ func (p *Prometheus) registerMetrics(subsystem string) {
 			Subsystem: subsystem,
 			Name:      "request_duration_seconds",
 			Help:      "request latencies",
-			Buckets:   []float64{0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 5, 7},
+			Buckets:   []float64{0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 5},
 		},
 		[]string{"code", "path"},
 	)
