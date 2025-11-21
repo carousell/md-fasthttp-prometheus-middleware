@@ -25,6 +25,7 @@ type Prometheus struct {
 	listenAddress string
 	MetricsPath   string
 	Handler       fasthttp.RequestHandler
+	customMetrics []prometheus.Collector
 }
 
 // NewPrometheus generates a new set of metrics with a certain subsystem name
@@ -83,6 +84,29 @@ func (p *Prometheus) registerMetrics(subsystem string) {
 	)
 
 	prometheus.Register(p.reqDur)
+}
+
+// RegisterMetric allows external packages to register custom Prometheus metrics
+// This can be used to add counters, gauges, histograms, or summaries
+func (p *Prometheus) RegisterMetric(collector prometheus.Collector) error {
+	if err := prometheus.Register(collector); err != nil {
+		return err
+	}
+	p.customMetrics = append(p.customMetrics, collector)
+	return nil
+}
+
+// MustRegisterMetric is like RegisterMetric but panics on error
+func (p *Prometheus) MustRegisterMetric(collector prometheus.Collector) {
+	if err := p.RegisterMetric(collector); err != nil {
+		panic(err)
+	}
+}
+
+// GetMetric retrieves a registered custom metric by searching through customMetrics
+// Note: For better type safety, consumers should maintain their own references to metrics
+func (p *Prometheus) GetCustomMetrics() []prometheus.Collector {
+	return p.customMetrics
 }
 
 // Custom adds the middleware to a fasthttp
