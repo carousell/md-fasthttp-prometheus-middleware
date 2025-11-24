@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/fasthttp/router"
@@ -26,6 +27,7 @@ type Prometheus struct {
 	MetricsPath   string
 	Handler       fasthttp.RequestHandler
 	customMetrics []prometheus.Collector
+	mu            sync.Mutex
 }
 
 // NewPrometheus generates a new set of metrics with a certain subsystem name
@@ -88,7 +90,11 @@ func (p *Prometheus) registerMetrics(subsystem string) {
 
 // RegisterMetric allows external packages to register custom Prometheus metrics
 // This can be used to add counters, gauges, histograms, or summaries
+// This method is safe for concurrent use.
 func (p *Prometheus) RegisterMetric(collector prometheus.Collector) error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	if err := prometheus.Register(collector); err != nil {
 		return err
 	}
@@ -103,10 +109,17 @@ func (p *Prometheus) MustRegisterMetric(collector prometheus.Collector) {
 	}
 }
 
-// GetMetric retrieves a registered custom metric by searching through customMetrics
+// GetCustomMetrics retrieves all registered custom metrics.
 // Note: For better type safety, consumers should maintain their own references to metrics
+// This method is safe for concurrent use.
 func (p *Prometheus) GetCustomMetrics() []prometheus.Collector {
-	return p.customMetrics
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	// Return a copy to prevent external modification
+	metrics := make([]prometheus.Collector, len(p.customMetrics))
+	copy(metrics, p.customMetrics)
+	return metrics
 }
 
 // Custom adds the middleware to a fasthttp
