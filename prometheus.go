@@ -27,7 +27,7 @@ type Prometheus struct {
 	MetricsPath   string
 	Handler       fasthttp.RequestHandler
 	customMetrics []prometheus.Collector
-	mu            sync.Mutex
+	mu            sync.RWMutex
 }
 
 // NewPrometheus generates a new set of metrics with a certain subsystem name
@@ -111,10 +111,10 @@ func (p *Prometheus) MustRegisterMetric(collector prometheus.Collector) {
 
 // GetCustomMetrics retrieves all registered custom metrics.
 // Note: For better type safety, consumers should maintain their own references to metrics
-// This method is safe for concurrent use.
+// This method is safe for concurrent use and allows concurrent reads.
 func (p *Prometheus) GetCustomMetrics() []prometheus.Collector {
-	p.mu.Lock()
-	defer p.mu.Unlock()
+	p.mu.RLock()
+	defer p.mu.RUnlock()
 
 	// Return a copy to prevent external modification
 	metrics := make([]prometheus.Collector, len(p.customMetrics))
