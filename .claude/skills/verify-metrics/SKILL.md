@@ -43,7 +43,7 @@ The library in `prometheus.go` has no unit tests. The only way to confirm a chan
    - The **`le` bucket boundaries** — list them and confirm they match the `Buckets` slice in `prometheus.go`.
    - The **`code` labels** map to the statuses you sent.
 
-5. **Stop the server** (kill the background PID). Don't leave `:8080` bound.
+5. **Stop the server** (e.g. `kill "$pid"`). Don't leave `:8080` bound.
 
 ## What "pass" looks like
 
