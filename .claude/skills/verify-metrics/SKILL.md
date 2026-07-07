@@ -22,9 +22,9 @@ The library in `prometheus.go` has no unit tests. The only way to confirm a chan
 
 2. **Start the example server in the background** (it listens on `:8080`, routes `/health` and `/values/{id}`, metrics at `/metrics`):
    ```bash
-   go run ./example &
+   go run ./example & pid=$!
    ```
-   Use a background run and capture the PID so you can stop it in step 5. Poll `http://localhost:8080/health` until it responds before firing traffic.
+   Use a background run and capture the PID in `pid` so you can stop it in step 5. Poll `http://localhost:8080/health` until it responds before firing traffic.
 
 3. **Fire representative traffic** — one request per label case that matters in this codebase:
    ```bash
