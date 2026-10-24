@@ -99,7 +99,7 @@ func (p *Prometheus) Use(r *router.Router) {
 	p.Handler = p.HandlerFunc()
 }
 
-// HandlerFunc is onion or wraper to handler for fasthttp listenandserve
+// HandlerFunc is onion or wrapper to handler for fasthttp ListenAndServe
 func (p *Prometheus) HandlerFunc() fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		uri := string(ctx.Request.URI().Path())
