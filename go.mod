@@ -1,6 +1,6 @@
 module github.com/carousell/fasthttp-prometheus-middleware
 
-go 1.19
+go 1.22
 
 require (
 	github.com/fasthttp/router v1.5.2
@@ -9,7 +9,7 @@ require (
 )
 
 require (
-	github.com/andybalholm/brotli v1.1.0 // indirect
+	github.com/andybalholm/brotli v1.2.7 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
